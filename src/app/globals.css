@@ -26,15 +26,16 @@ body {
 }
 
 @theme{
-  --animate-slide-up-bounce: slide-up-bounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  --animate-slide-down-bounce-out: slide-down-bounce-out 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  --animate-slide-up-bounce: slide-up-bounce 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  --animate-slide-down-bounce-out: slide-down-bounce-out 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  --animate-blinking: blinking 1s infinite;
 
   @keyframes slide-up-bounce {
     0% {
       opacity: 0;
       transform: translateY(100%); /* Mulai dari bawah */
     }
-    80% { /* Titik overshoot: terjadi sedikit lebih awal untuk kecepatan */
+    50% { /* Titik overshoot: terjadi sedikit lebih awal untuk kecepatan */
       opacity: 1;
       transform: translateY(-1%); /* Overshoot lebih besar */
     }
@@ -58,4 +59,44 @@ body {
       transform: translateY(100%); /* Turun ke bawah dan menghilang */
     }
   }
+
+  @keyframes blinking {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+}
+
+td {
+  vertical-align: top;
+}
+
+.stack-icon {
+  @apply text-[1.5em] tracking-widest
+}
+
+.inline-info {
+  @apply flex items-center;
+}
+
+.inline-info span {
+  @apply px-5 font-light text-[1.25em];
+}
+
+.inline-info span:first-child {
+  clip-path: polygon(0% 0%, 90% 0%, 100% 50%, 90% 100%, 0% 100%);
+}
+.inline-info span:not(:first-child) {
+  @apply pl-10 -ml-6;
+  clip-path: polygon(90% 0, 100% 50%, 90% 100%, 0% 100%, 10% 50%, 0% 0%);
+}
+
+div::-webkit-scrollbar {
+  width: 8px;
 }

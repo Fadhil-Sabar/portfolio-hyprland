@@ -1,0 +1,140 @@
+import { useMemo, useCallback, useEffect, useState } from 'react';
+import Profile from '../molecules/profile';
+import { useTerminal } from '@/utils/store/terminal';
+
+
+export default function InlineTerminal({ bottomRef, index }) {
+    const { 
+        history, 
+        setHistory, 
+        input, 
+        setInput, 
+        clearHistory, 
+        addHistory, 
+        resetInput, 
+        removeLastInput,
+        addInput,
+        focusedIndex
+    } = useTerminal();
+
+    const listCommands = {
+        clear: () => clearHistory(focusedIndex),
+        date: () => `Current date is: ${new Date().toLocaleString()}`,
+        profile: <Profile showTerminal={false} />,
+        about: 'This portfolio is built using React and Zustand for state management. It features a terminal interface where you can interact with various commands, inspired by Hyprland.'
+    }
+
+    const currentDate = useMemo(() => {
+        return new Date().toLocaleDateString('en-US', {
+            month: '2-digit',
+            day: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
+    }, []);
+
+    const handleKeyDown = useCallback((event) => {
+        console.log(event.key, "key pressed", input[focusedIndex]);
+        const blockedKeys = ['Tab', 'Meta']
+        if(event.ctrlKey || event.metaKey || event.altKey || blockedKeys.includes(event.key)) {
+            return;
+        }
+
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            const command = input[focusedIndex].trim();
+            console.log(`Command entered: ${command}`);
+            if (command) {
+                let response = ''
+
+                if(command === 'help'){
+                    response = `Available commands: ${Object.keys(listCommands).join(', ')}`;
+                }
+                else if(listCommands[command]) {
+                    response = typeof listCommands[command] === 'function' ? listCommands[command]() : listCommands[command];
+                }
+                else {
+                    response = `Unknown command: ${command}`;
+                }
+
+                if(response) {
+                    addHistory(focusedIndex, command, response);
+                }
+            }
+
+
+            resetInput(focusedIndex);
+        } else if (event.key === 'Backspace') {
+            removeLastInput(focusedIndex);
+        } else {
+            addInput(focusedIndex, event.key);
+        }
+    }, [input, focusedIndex]);
+
+    useEffect(() => {
+        document.addEventListener('keydown', handleKeyDown);
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        }
+    }, [handleKeyDown])
+
+    useEffect(() => {
+        console.log("History updated:", history[index], "Index:", index);
+        if (bottomRef?.current) {
+            bottomRef.current.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [history, index]);
+
+    return (
+        <>
+            {history?.[index]?.map((line, index) => (
+                <div key={index} >
+                    <div className="inline-info">
+                        <span className="bg-blue-500">
+                            {`${currentDate}`}
+                        </span>
+                        <span className="bg-amber-500">
+                            {`${currentDate}`}
+                        </span>
+                    </div>
+                    <div className="inline-info">
+                        <span className="bg-amber-700">
+                            @diru
+                        </span>
+                        <p className="pl-2 text-[1.25em]">
+                            {line.command}
+                        </p>
+                    </div>
+                    <div className="flex flex-col text-white pl-2">
+                        {
+                            typeof line.response === 'string' ? (
+                                <p className="text-[1.25em]">{line.response}</p>
+                            ) : (
+                                line.response
+                            )
+                        }
+                    </div>
+                </div>
+            ))}
+            <div className="inline-info">
+                <span className="bg-blue-500">
+                    {`${currentDate}`}
+                </span>
+                <span className="bg-amber-500">
+                    {`${currentDate}`}
+                </span>
+            </div>
+            <div className="inline-info">
+                <span className="bg-amber-700">
+                    @diru
+                </span>
+                <p className="pl-2 text-[1.25em]">
+                    {input[index] || ''}
+                </p>
+                <span className={`text-[2em] -translate-x-5 ${focusedIndex === index ? 'last:animate-blinking' : ''} transition-all`}>|</span>
+            </div>
+        </>
+    )
+}
