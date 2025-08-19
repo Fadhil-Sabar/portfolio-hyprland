@@ -4,6 +4,15 @@ import { useTerminal } from '@/utils/store/terminal';
 
 
 export default function InlineTerminal({ bottomRef, index }) {
+    const currentDate = () => new Date().toLocaleDateString('en-US', {
+        month: '2-digit',
+        day: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false
+    });
+
     const { 
         history, 
         setHistory, 
@@ -14,7 +23,8 @@ export default function InlineTerminal({ bottomRef, index }) {
         resetInput, 
         removeLastInput,
         addInput,
-        focusedIndex
+        focusedIndex,
+        replaceCurrentInput
     } = useTerminal();
 
     const listCommands = {
@@ -24,20 +34,9 @@ export default function InlineTerminal({ bottomRef, index }) {
         about: 'This portfolio is built using React and Zustand for state management. It features a terminal interface where you can interact with various commands, inspired by Hyprland.'
     }
 
-    const currentDate = useMemo(() => {
-        return new Date().toLocaleDateString('en-US', {
-            month: '2-digit',
-            day: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false
-        });
-    }, []);
-
     const handleKeyDown = useCallback((event) => {
         console.log(event.key, "key pressed", input[focusedIndex]);
-        const blockedKeys = ['Tab', 'Meta']
+        const blockedKeys = ['Tab', 'Meta', 'Shift']
         if(event.ctrlKey || event.metaKey || event.altKey || blockedKeys.includes(event.key)) {
             return;
         }
@@ -68,6 +67,10 @@ export default function InlineTerminal({ bottomRef, index }) {
             resetInput(focusedIndex);
         } else if (event.key === 'Backspace') {
             removeLastInput(focusedIndex);
+        } else if (event.key === 'ArrowUp') {
+            replaceCurrentInput('up');
+        } else if (event.key === 'ArrowDown') {
+            replaceCurrentInput('down');
         } else {
             addInput(focusedIndex, event.key);
         }
@@ -93,10 +96,10 @@ export default function InlineTerminal({ bottomRef, index }) {
                 <div key={index} >
                     <div className="inline-info">
                         <span className="bg-blue-500">
-                            {`${currentDate}`}
+                            {`${line.createdAt}`}
                         </span>
                         <span className="bg-amber-500">
-                            {`${currentDate}`}
+                            ~
                         </span>
                     </div>
                     <div className="inline-info">
@@ -120,10 +123,10 @@ export default function InlineTerminal({ bottomRef, index }) {
             ))}
             <div className="inline-info">
                 <span className="bg-blue-500">
-                    {`${currentDate}`}
+                    {`${currentDate()}`}
                 </span>
                 <span className="bg-amber-500">
-                    {`${currentDate}`}
+                    ~
                 </span>
             </div>
             <div className="inline-info">
@@ -133,7 +136,7 @@ export default function InlineTerminal({ bottomRef, index }) {
                 <p className="pl-2 text-[1.25em]">
                     {input[index] || ''}
                 </p>
-                <span className={`text-[2em] -translate-x-5 ${focusedIndex === index ? 'last:animate-blinking' : ''} transition-all`}>|</span>
+                <span className={`text-[2em] -translate-x-5 ${focusedIndex === index ? 'last:animate-blinking' : 'hidden'} transition-all`}>|</span>
             </div>
         </>
     )

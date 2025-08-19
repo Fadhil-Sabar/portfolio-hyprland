@@ -8,11 +8,14 @@ import { useCallback, useEffect, useState, useMemo } from "react";
 import localFont from 'next/font/local';
 import MainTerminal from "@/components/molecules/main-terminal";
 import { useTerminal } from '@/utils/store/terminal';
+import OpeningTerminal from '@/components/molecules/opening-terminal';
 
 const fantasqueBold = localFont({ src: '../../public/fonts/FantasqueSansMNerdFont-Bold.ttf' });
 
 export default function Home() {
-  const [terminal, setTerminal] = useState([]);
+  const [terminal, setTerminal] = useState([
+    { closing: false, floating: true },
+  ]);
   const [isCurrentlyClosing, setIsCurrentlyClosing] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date().toLocaleString());
   const {
@@ -127,23 +130,41 @@ export default function Home() {
 
   return (
     <div className={`relative bg-[url(/images/main-wp.png)] w-full h-screen bg-cover bg-center overflow-hidden text-[16px] ${fantasqueBold.className}`}>
-      <header className="top-0 left-0 w-full h-12 bg-black/50 backdrop-blur-lg flex items-center justify-between rounded-lg m-1 px-4">
-        <h1 className="text-white text-lg font-bold">My Portfolio</h1>
+      <header className="top-0 left-0 w-full h-12 bg-black/50 backdrop-blur-sm flex items-center justify-between rounded-lg m-1 px-4">
+        <h1 className="text-white text-lg font-bold">Diru</h1>
         <div className="">{currentDate}</div>
-        <div className="">
-
+        <div className="flex items-center gap-3 justify-center">
+          <div className="flex items-center gap-4 mx-4">
+            <span className="text-blue-400 text-[1.5em]"></span>
+            <span className="text-white text-[1.5em]"></span>
+          </div>
+          <span className="text-gray-400 text-[1em]">|</span>
+          <span className="text-white text-[1em]">⏻</span>
         </div>
       </header>
+
+      {
+        terminal?.filter(item => item.floating)?.map((item, index) => {
+          return (
+            item.child || <OpeningTerminal
+              index={index}
+              key={index}
+              item={item}
+            />
+          )
+        })
+      }
+
       <div className={`grid grid-cols-2 grid-rows-2 gap-3 h-[95svh] p-2`}>
-        {terminal.map((item, index) => {
-          const totalTerminals = terminal.length;
+        {terminal?.filter(item => !item.floating)?.map((item, index) => {
+          const totalTerminals = terminal.filter(item => !item.floating).length;
           const gridClasses = getTerminalGridClasses(index, totalTerminals);
 
           return (
             <Terminal item={item} key={index} index={index} className={`${gridClasses}`}>
               {
                 item.child ? React.cloneElement(item.child, { index }) : (
-                  <div className={`flex flex-col overflow-scroll max-h-[90svh] transition-opacity ${index !== focusedIndex ? 'opacity-75' : ''}`}>
+                  <div className={`flex flex-col overflow-scroll max-h-[90svh] transition-opacity ${index !== focusedIndex ? 'opacity-70' : ''}`}>
                     <div className="text-white text-center py-4">
                       <h1 className="text-[2em] font-bold">Hi, I&apos;m Fadhil</h1>
                       <h1 className="text-[2em] font-bold">Welcome to my Hyprland Portfolio</h1>

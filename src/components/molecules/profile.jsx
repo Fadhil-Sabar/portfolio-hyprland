@@ -18,7 +18,7 @@ export default function Profile({
     }, [index, setFocusedIndex]);
 
     return (
-        <div className={`${showTerminal ? 'overflow-scroll' : 'overflow-hidden'} max-h-[100%]
+        <div className={`${showTerminal ? 'overflow-scroll' : 'overflow-hidden'} max-h-[100%] transition-opacity
             ${focusedIndex !== index && showTerminal ? 'opacity-75' : ''}
             `}
             onMouseOver={handleMouseOver}

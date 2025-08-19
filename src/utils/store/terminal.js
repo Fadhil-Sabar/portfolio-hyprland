@@ -3,7 +3,7 @@ import { create } from "zustand";
 export const useTerminal = create((set) => ({
     history: [],
     input: [],
-    focusedIndex: 0,
+    focusedIndex: null,
     setFocusedIndex: (index) => set({ focusedIndex: index }),
     setHistory: (index, newHistory) => set((state) => {
         const newHistories = [...state.history];
@@ -20,7 +20,15 @@ export const useTerminal = create((set) => ({
         if (!newHistories[index]) {
             newHistories[index] = [];
         }
-        newHistories[index].push({ command, response });
+        const createdAt = new Date().toLocaleDateString('en-US', {
+            month: '2-digit',
+            day: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+        });
+        newHistories[index].push({ command, response, createdAt, historyIndex: null });
         return { history: newHistories };
     }),
     clearHistory: (index) => set((state) => {
@@ -56,4 +64,39 @@ export const useTerminal = create((set) => ({
         newInputs[index] = '';
         return { input: newInputs };
     }),
+    replaceCurrentInput: (direction) => set((state) => {
+        const newInputs = [...state.input];
+        const newHistory = [...state.history];
+
+        const currentHistory = newHistory[state.focusedIndex] || [];
+
+        let currentHistoryIndex = currentHistory.findIndex(d => d.historyIndex !== null);
+        let tempIndex = currentHistoryIndex;
+
+        if (currentHistoryIndex === - 1) {
+            currentHistoryIndex = currentHistory.length;
+        }
+        
+        if(direction === 'up'){
+            currentHistory[tempIndex === -1 ? currentHistoryIndex - 1 : tempIndex].historyIndex = null
+            currentHistoryIndex = Math.max(0, currentHistoryIndex - 1);
+        } else if(direction === 'down'){
+            if(tempIndex === -1) {
+                return { input: newInputs };
+            }
+
+            currentHistory[currentHistoryIndex].historyIndex = null
+            if(currentHistoryIndex === currentHistory.length - 1) {
+                newInputs[state.focusedIndex] = '';
+                return { input: newInputs };
+            }
+            currentHistoryIndex = Math.min(currentHistory.length - 1, currentHistoryIndex + 1);
+        }
+
+        currentHistory[currentHistoryIndex].historyIndex = true;
+
+        newInputs[state.focusedIndex] = currentHistory[currentHistoryIndex]?.command
+
+        return { input: newInputs };
+    })
 }));
