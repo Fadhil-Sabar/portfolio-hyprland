@@ -14,7 +14,8 @@ export default function OpeningTerminal({ item, index, className }) {
             <Terminal
                 item={item}
                 index={index}
-                className={`w-[70%] md:w-[50%] p-5 absolute top-1/2 left-1/2 -translate-x-1/2 z-50 -translate-y-1/2`}
+                className={`w-[70%] md:w-[50%]`}
+                isFloating={true}
             >
                 <div className={`flex flex-col items-center justify-center`}>
                     <span className="text-[1.25em]">Hi, welcome to my portfolio</span>

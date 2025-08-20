@@ -10,6 +10,8 @@ import MainTerminal from "@/components/molecules/main-terminal";
 import { useTerminal } from '@/utils/store/terminal';
 import OpeningTerminal from '@/components/molecules/opening-terminal';
 import ProgressBar from '@/components/atoms/progress-bar';
+import TextWithTooltip from '@/components/atoms/text-with-tooltip';
+import HelpTerminal from '@/components/molecules/help-terminal';
 
 const fantasqueBold = localFont({ src: '../../public/fonts/FantasqueSansMNerdFont-Bold.ttf' });
 
@@ -18,7 +20,8 @@ export default function Home() {
     { closing: false, floating: true },
   ]);
   const [isCurrentlyClosing, setIsCurrentlyClosing] = useState(false);
-  const [currentDate, setCurrentDate] = useState(new Date().toLocaleString());
+  const [currentDate, setCurrentDate] = useState('');
+
   const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState(0);
 
@@ -43,15 +46,21 @@ export default function Home() {
 
     if (event.key === "Enter" && event.altKey) {
       setTerminal((prev) => {
-        return [...prev, { closing: false }];
+        return [...prev, {id: Math.random(), closing: false }];
       });
     }
     if (event.key === 'p' && event.altKey) {
       setTerminal((prev) => {
-        return [...prev, { closing: false, child: <Profile /> }];
+        return [...prev, {id: Math.random(), closing: false, child: <Profile /> }];
+      });
+    }
+    if (event.key === 'h' && event.altKey) {
+      setTerminal((prev) => {
+        return [...prev, {id: Math.random(), closing: false, floating: true, child: <HelpTerminal /> }];
       });
     }
     if (event.key === "q" && event.altKey) {
+      console.log('pressed')
       setTerminal((prev) => {
         prev[focusedIndex] = {
           ...prev[focusedIndex],
@@ -160,7 +169,10 @@ export default function Home() {
 
     return () => clearInterval(interval); // Cleanup
   }, [isLoading]);
-  console.log(isLoading)
+
+  useEffect(() => {
+    console.log("Terminal updated:", terminal);
+  }, [terminal]);
 
   useEffect(() => {
     terminal.forEach((item, index) => {
@@ -221,8 +233,15 @@ export default function Home() {
           <div className="">{currentDate}</div>
           <div className="flex items-center gap-3 justify-center">
             <div className="flex items-center gap-4 mx-4">
-              <span className="text-blue-400 text-[1.5em]"></span>
-              <span className="text-white text-[1.5em]"></span>
+              <TextWithTooltip tooltip={'Help'}>
+                <span className="cursor-pointer text-white text-[1.5em]">?</span>
+              </TextWithTooltip>
+              <TextWithTooltip tooltip={'Linkedin'}>
+                <span className="cursor-pointer text-blue-400 text-[1.5em]"></span>
+              </TextWithTooltip>
+              <TextWithTooltip tooltip={'Github'}>
+                <span className="cursor-pointer text-white text-[1.5em]"></span>
+              </TextWithTooltip>
             </div>
             <span className="text-gray-400 text-[1em]">|</span>
             <span className="text-white text-[1em]">⏻</span>
@@ -230,9 +249,9 @@ export default function Home() {
         </header>
 
         {
-          terminal?.filter(item => item.floating)?.map((item, index) => {
+          terminal?.filter(item => item?.floating)?.map((item, index) => {
             return (
-              item.child || <OpeningTerminal
+              item.child ? React.cloneElement(item.child, { index, key: item.id }) : <OpeningTerminal
                 index={index}
                 key={index}
                 item={item}
@@ -242,8 +261,8 @@ export default function Home() {
         }
 
         <div className={`grid grid-cols-2 grid-rows-2 gap-3 h-[95svh] p-2 overflow-hidden`}>
-          {terminal?.filter(item => !item.floating)?.map((item, index) => {
-            const totalTerminals = terminal.filter(item => !item.floating).length;
+          {terminal?.filter(item => !item?.floating)?.map((item, index) => {
+            const totalTerminals = terminal.filter(item => !item?.floating).length;
             const gridClasses = getTerminalGridClasses(index, totalTerminals);
 
             return (
