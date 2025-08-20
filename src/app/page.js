@@ -12,10 +12,12 @@ import OpeningTerminal from '@/components/molecules/opening-terminal';
 import ProgressBar from '@/components/atoms/progress-bar';
 import TextWithTooltip from '@/components/atoms/text-with-tooltip';
 import HelpTerminal from '@/components/molecules/help-terminal';
+import { useIsMobile } from '@/utils/hooks/is-mobile';
 
 const fantasqueBold = localFont({ src: '../../public/fonts/FantasqueSansMNerdFont-Bold.ttf' });
 
 export default function Home() {
+  const isMobile = useIsMobile()
   const [terminal, setTerminal] = useState([
     { closing: false, floating: true },
   ]);
@@ -28,40 +30,33 @@ export default function Home() {
   const {
     focusedIndex,
     clearLastHistory,
-    resetInput
+    resetInput,
+    setFocusedIndex
   } = useTerminal()
 
   const gridCols = useMemo(() => {
     return `grid-cols-${terminal.length > 2 ? 2 : terminal.length}`;
   }, [terminal.length]);
 
-  const handleKeyDown = useCallback((event) => {
-    if (isCurrentlyClosing) return;
-    const whiteList = ["F12", "r", "=", "-", "0"];
+  const newTerminal = useCallback(() => {
+    setTerminal((prev) => {
+      return [...prev, { id: Math.random(), closing: false }];
+    });
+  }, []);
+  const newProfileTerminal = useCallback(() => {
+    setTerminal((prev) => {
+      return [...prev, { id: Math.random(), closing: false, child: <Profile /> }];
+    });
+  }, []);
 
-    if (!whiteList.includes(event.key) && !event.ctrlKey) {
-      event.preventDefault();
-    }
-    console.log(event.key);
+  const newHelpTerminal = useCallback(() => {
+    setTerminal((prev) => {
+      return [...prev, { id: Math.random(), closing: false, floating: true, child: <HelpTerminal /> }];
+    });
+  }, []);
 
-    if (event.key === "Enter" && event.altKey) {
-      setTerminal((prev) => {
-        return [...prev, {id: Math.random(), closing: false }];
-      });
-    }
-    if (event.key === 'p' && event.altKey) {
-      setTerminal((prev) => {
-        return [...prev, {id: Math.random(), closing: false, child: <Profile /> }];
-      });
-    }
-    if (event.key === 'h' && event.altKey) {
-      setTerminal((prev) => {
-        return [...prev, {id: Math.random(), closing: false, floating: true, child: <HelpTerminal /> }];
-      });
-    }
-    if (event.key === "q" && event.altKey) {
-      console.log('pressed')
-      setTerminal((prev) => {
+  const closeTerminal = useCallback(() => {
+    setTerminal((prev) => {
         prev[focusedIndex] = {
           ...prev[focusedIndex],
           closing: true
@@ -75,9 +70,31 @@ export default function Home() {
       resetInput(focusedIndex)
 
       setIsCurrentlyClosing(true);
+  }, [focusedIndex, clearLastHistory, resetInput]);
+
+  const handleKeyDown = useCallback((event) => {
+    if (isCurrentlyClosing) return;
+    const whiteList = ["F12", "r", "=", "-", "0"];
+
+    if (!whiteList.includes(event.key) && !event.ctrlKey) {
+      event.preventDefault();
+    }
+    console.log(event.key);
+
+    if (event.key === "Enter" && event.altKey) {
+      newTerminal()
+    }
+    if (event.key === 'p' && event.altKey) {
+      newProfileTerminal();
+    }
+    if (event.key === 'h' && event.altKey) {
+      newHelpTerminal();
+    }
+    if (event.key === "q" && event.altKey) {
+      closeTerminal()
     }
 
-  }, [clearLastHistory, focusedIndex, isCurrentlyClosing]);
+  }, [closeTerminal, isCurrentlyClosing, newHelpTerminal, newProfileTerminal, newTerminal]);
 
   const getTerminalGridClasses = (index, totalTerminals) => {
     if (totalTerminals === 1) {
@@ -207,6 +224,12 @@ export default function Home() {
     };
   }, []);
 
+  useEffect(() => {
+    if(isMobile && !isLoading){
+      setFocusedIndex(terminal.length - 1)
+    }
+  }, [isLoading, isMobile, setFocusedIndex, terminal.length])
+
   return (
     <>
       {
@@ -234,7 +257,7 @@ export default function Home() {
           <div className="flex items-center gap-3 justify-center">
             <div className="flex items-center gap-4 mx-4">
               <TextWithTooltip tooltip={'Help'}>
-                <span className="cursor-pointer text-white text-[1.5em]">?</span>
+                <span className="cursor-pointer text-white text-[1.5em]" onClick={() => newHelpTerminal()}>?</span>
               </TextWithTooltip>
               <TextWithTooltip tooltip={'Linkedin'}>
                 <span className="cursor-pointer text-blue-400 text-[1.5em]"></span>
@@ -248,6 +271,12 @@ export default function Home() {
           </div>
         </header>
 
+        <div className={`absolute top-1/2 right-0 z-50 ${isMobile ? 'flex' : 'hidden'}`}>
+          <div className="flex flex-col items-center gap-2 max-w-4 bg-black/75 px-5 py-2.5 rounded-full mr-1">
+            <button className="text-[1.5em] cursor-pointer transition-transform active:scale-150" title="New Terminal" onClick={() => newTerminal()}>+</button>
+            <button className="text-[1.5em] cursor-pointer transition-transform active:scale-150" title="Close Terminal" onClick={() => closeTerminal()}>-</button>
+          </div>
+        </div>
         {
           terminal?.filter(item => item?.floating)?.map((item, index) => {
             return (

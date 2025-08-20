@@ -33,7 +33,7 @@ export default function Profile({
                         className="rounded-full border-2 opacity-70"
                     />
                 </div>
-                <div className="flex flex-col justify-center items-start mx-auto tracking-wide w-2/3 gap-2">
+                <div className="flex flex-col justify-center items-start mx-auto tracking-wide w-full md:w-2/3 gap-2">
                     <div>
                         <span className="text-[1.5em] font-semibold">Fadhil Andriawan</span>
                         <p className="text-[1.25em] text-gray-300">Junior Software Developer</p>
@@ -83,7 +83,7 @@ export default function Profile({
                         </ul>
 
                     </div>
-                    <div>
+                    <div className="w-full">
                         <table className="mt-4 table-auto text-[1.25em]">
                             <thead>
                                 <tr align="left">
