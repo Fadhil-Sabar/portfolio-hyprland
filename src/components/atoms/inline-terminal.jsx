@@ -2,6 +2,7 @@ import { useMemo, useCallback, useEffect, useState } from 'react';
 import Profile from '../molecules/profile';
 import { useTerminal } from '@/utils/store/terminal';
 import Projects from '../molecules/projects';
+import Contact from './contact';
 
 
 export default function InlineTerminal({ bottomRef, index }) {
@@ -36,7 +37,10 @@ export default function InlineTerminal({ bottomRef, index }) {
         hyprland: (
             <span className="text-[1.25em]">Hyprland is a dynamic tiling Wayland compositor that offers a modern and efficient desktop experience. It is known for its performance and flexibility, making it a popular choice among Linux users. Learn more at <a href="https://hypr.land/" className="underline">https://hypr.land/</a></span>
         ),
-        projects: <Projects/>
+        projects: <Projects/>,
+        contact: (
+            <Contact/>
+        )
     }
 
     const handleKeyDown = useCallback((event) => {
