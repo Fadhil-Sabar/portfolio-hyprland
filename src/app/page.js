@@ -9,6 +9,7 @@ import localFont from 'next/font/local';
 import MainTerminal from "@/components/molecules/main-terminal";
 import { useTerminal } from '@/utils/store/terminal';
 import OpeningTerminal from '@/components/molecules/opening-terminal';
+import ProgressBar from '@/components/atoms/progress-bar';
 
 const fantasqueBold = localFont({ src: '../../public/fonts/FantasqueSansMNerdFont-Bold.ttf' });
 
@@ -18,6 +19,9 @@ export default function Home() {
   ]);
   const [isCurrentlyClosing, setIsCurrentlyClosing] = useState(false);
   const [currentDate, setCurrentDate] = useState(new Date().toLocaleString());
+  const [isLoading, setIsLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
+
   const {
     focusedIndex,
     clearLastHistory,
@@ -44,7 +48,7 @@ export default function Home() {
     }
     if (event.key === 'p' && event.altKey) {
       setTerminal((prev) => {
-        return [...prev, { closing: false, child: <Profile/> }];
+        return [...prev, { closing: false, child: <Profile /> }];
       });
     }
     if (event.key === "q" && event.altKey) {
@@ -63,7 +67,7 @@ export default function Home() {
 
       setIsCurrentlyClosing(true);
     }
-    
+
   }, [clearLastHistory, focusedIndex, isCurrentlyClosing]);
 
   const getTerminalGridClasses = (index, totalTerminals) => {
@@ -94,6 +98,69 @@ export default function Home() {
   //     clearTimeout(timeoutId);
   //   };
   // }, [terminal]);
+
+
+  const loadAllAssets = useCallback(async () => {
+    const assetUrls = ['/images/main-wp.png'];
+
+    // Promise untuk load semua aset
+    const assetPromise = Promise.all(
+      assetUrls.map(
+        url =>
+          new Promise((resolve, reject) => {
+            const img = new window.Image();
+            img.src = url;
+            img.onload = resolve;
+            img.onerror = reject;
+          })
+      )
+    );
+
+    // Promise untuk minimum loading time (misalnya 2.5 detik)
+    const minimumTimePromise = new Promise(resolve =>
+      setTimeout(resolve, 2500)
+    );
+
+    try {
+      // Tunggu dua-duanya selesai (siapa lambat, dia yang menang)
+      await Promise.all([assetPromise, minimumTimePromise]);
+
+      // Pastikan progress ke 100% + delay kecil biar smooth
+      setProgress(100);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 500);
+    } catch (error) {
+      console.error('Gagal memuat aset:', error);
+      setProgress(100);
+      setIsLoading(false);
+    }
+  }, []);
+
+
+  useEffect(() => {
+    loadAllAssets();
+  }, [loadAllAssets]);
+
+  useEffect(() => {
+    let interval;
+
+    if (isLoading) {
+      interval = setInterval(() => {
+        setProgress((prevProgress) => {
+          const newProgress = prevProgress + 5;
+          if (newProgress >= 90) {
+            clearInterval(interval);
+            return 90;
+          }
+          return newProgress;
+        });
+      }, 300); // Kecepatan update progress
+    }
+
+    return () => clearInterval(interval); // Cleanup
+  }, [isLoading]);
+  console.log(isLoading)
 
   useEffect(() => {
     terminal.forEach((item, index) => {
@@ -129,55 +196,75 @@ export default function Home() {
   }, []);
 
   return (
-    <div className={`relative bg-[url(/images/main-wp.png)] w-full h-screen bg-cover bg-center overflow-hidden text-[16px] ${fantasqueBold.className}`}>
-      <header className="top-0 left-0 w-full h-12 bg-black/50 backdrop-blur-sm flex items-center justify-between rounded-lg m-1 px-4">
-        <h1 className="text-white text-lg font-bold">Diru</h1>
-        <div className="">{currentDate}</div>
-        <div className="flex items-center gap-3 justify-center">
-          <div className="flex items-center gap-4 mx-4">
-            <span className="text-blue-400 text-[1.5em]"></span>
-            <span className="text-white text-[1.5em]"></span>
-          </div>
-          <span className="text-gray-400 text-[1em]">|</span>
-          <span className="text-white text-[1em]">⏻</span>
-        </div>
-      </header>
-
+    <>
       {
-        terminal?.filter(item => item.floating)?.map((item, index) => {
-          return (
-            item.child || <OpeningTerminal
-              index={index}
-              key={index}
-              item={item}
-            />
-          )
-        })
+        isLoading && (
+          <div className="flex flex-col w-full items-center justify-center h-screen bg-black text-white italic absolute z-50">
+            <h1 className="text-white text-2xl mb-4">Loading Assets...</h1>
+            <ProgressBar progress={progress} />
+          </div>
+        )
       }
+      <div className={`relative w-full h-screen overflow-hidden text-[16px] ${fantasqueBold.className}`}>
+        {/* Background Image */}
+        <Image
+          src="/images/main-wp.png"
+          alt="Background"
+          fill
+          className="object-cover -z-10"
+          priority
+        />
 
-      <div className={`grid grid-cols-2 grid-rows-2 gap-3 h-[95svh] p-2`}>
-        {terminal?.filter(item => !item.floating)?.map((item, index) => {
-          const totalTerminals = terminal.filter(item => !item.floating).length;
-          const gridClasses = getTerminalGridClasses(index, totalTerminals);
+        {/* Content */}
+        <header className="top-0 left-0 w-full h-12 bg-black/50 backdrop-blur-sm flex items-center justify-between rounded-lg m-1 px-4">
+          <h1 className="text-white text-lg font-bold">Diru</h1>
+          <div className="">{currentDate}</div>
+          <div className="flex items-center gap-3 justify-center">
+            <div className="flex items-center gap-4 mx-4">
+              <span className="text-blue-400 text-[1.5em]"></span>
+              <span className="text-white text-[1.5em]"></span>
+            </div>
+            <span className="text-gray-400 text-[1em]">|</span>
+            <span className="text-white text-[1em]">⏻</span>
+          </div>
+        </header>
 
-          return (
-            <Terminal item={item} key={index} index={index} className={`${gridClasses}`}>
-              {
-                item.child ? React.cloneElement(item.child, { index }) : (
-                  <div className={`flex flex-col overflow-scroll max-h-[90svh] transition-opacity ${index !== focusedIndex ? 'opacity-70' : ''}`}>
-                    <div className="text-white text-center py-4">
-                      <h1 className="text-[2em] font-bold">Hi, I&apos;m Fadhil</h1>
-                      <h1 className="text-[2em] font-bold">Welcome to my Hyprland Portfolio</h1>
-                      <p className="mt-4">Type help for available commands.</p>
+        {
+          terminal?.filter(item => item.floating)?.map((item, index) => {
+            return (
+              item.child || <OpeningTerminal
+                index={index}
+                key={index}
+                item={item}
+              />
+            )
+          })
+        }
+
+        <div className={`grid grid-cols-2 grid-rows-2 gap-3 h-[95svh] p-2 overflow-hidden`}>
+          {terminal?.filter(item => !item.floating)?.map((item, index) => {
+            const totalTerminals = terminal.filter(item => !item.floating).length;
+            const gridClasses = getTerminalGridClasses(index, totalTerminals);
+
+            return (
+              <Terminal item={item} key={`terminal-${index}`} index={index} className={`${gridClasses}`}>
+                {
+                  item.child ? React.cloneElement(item.child, { index }) : (
+                    <div className={`flex flex-col overflow-scroll max-h-[90svh] transition-opacity ${index !== focusedIndex ? 'opacity-70' : ''}`}>
+                      <div className="text-white text-center py-4">
+                        <h1 className="text-[2em] font-bold">Hi, I&apos;m Fadhil</h1>
+                        <h1 className="text-[2em] font-bold">Welcome to my Hyprland Portfolio</h1>
+                        <p className="mt-4 text-[1.25em]">Type <i>help</i> for available commands.</p>
+                      </div>
+                      <MainTerminal index={index} />
                     </div>
-                    <MainTerminal index={index} />
-                  </div>
-                )
-              }
-            </Terminal>
-          );
-        })}
+                  )
+                }
+              </Terminal>
+            );
+          })}
+        </div>
       </div>
-    </div>
+    </>
   );
 }

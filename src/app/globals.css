@@ -25,52 +25,88 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-@theme{
-  --animate-slide-up-bounce: slide-up-bounce 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  --animate-slide-down-bounce-out: slide-down-bounce-out 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-  --animate-blinking: blinking 1s infinite;
+/* Pindahkan keyframes keluar dari @theme untuk Firefox compatibility */
+@keyframes slide-up-bounce {
+  0% {
+    opacity: 0;
+    transform: translateY(100%);
+    -webkit-transform: translateY(100%);
+    -moz-transform: translateY(100%);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-1%);
+    -webkit-transform: translateY(-1%);
+    -moz-transform: translateY(-1%);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
+  }
+}
 
-  @keyframes slide-up-bounce {
-    0% {
-      opacity: 0;
-      transform: translateY(100%); /* Mulai dari bawah */
-    }
-    50% { /* Titik overshoot: terjadi sedikit lebih awal untuk kecepatan */
-      opacity: 1;
-      transform: translateY(-1%); /* Overshoot lebih besar */
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0); /* Kembali ke posisi normal */
-    }
+@keyframes slide-down-bounce-out {
+  0% {
+    opacity: 1;
+    transform: translateY(0);
+    -webkit-transform: translateY(0);
+    -moz-transform: translateY(0);
   }
-  
-  @keyframes slide-down-bounce-out {
-    0% {
-      opacity: 1;
-      transform: translateY(0); /* Posisi normal */
-    }
-    20% { /* Titik overshoot/undershoot di awal */
-      opacity: 0.5;
-      transform: translateY(-1%); /* Sedikit "pop" ke atas sebelum turun */
-    }
-    100% {
-      opacity: 0;
-      transform: translateY(100%); /* Turun ke bawah dan menghilang */
-    }
+  20% {
+    opacity: 0.5;
+    transform: translateY(-1%);
+    -webkit-transform: translateY(-1%);
+    -moz-transform: translateY(-1%);
   }
+  100% {
+    opacity: 0;
+    transform: translateY(100%);
+    -webkit-transform: translateY(100%);
+    -moz-transform: translateY(100%);
+  }
+}
 
-  @keyframes blinking {
-    0% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
+@keyframes blinking {
+  0% {
+    opacity: 1;
   }
+  50% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* CSS Animation Classes dengan cubic-bezier yang dipertahankan */
+.animate-slide-up-bounce {
+  animation: slide-up-bounce 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  -webkit-animation: slide-up-bounce 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  -moz-animation: slide-up-bounce 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  opacity: 0;
+  transform: translateY(100%);
+  -webkit-transform: translateY(100%);
+  -moz-transform: translateY(100%);
+  will-change: transform, opacity;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.animate-slide-down-bounce-out {
+  animation: slide-down-bounce-out 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  -webkit-animation: slide-down-bounce-out 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  -moz-animation: slide-down-bounce-out 1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  will-change: transform, opacity;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+.animate-blinking {
+  animation: blinking 1s infinite;
+  -webkit-animation: blinking 1s infinite;
+  -moz-animation: blinking 1s infinite;
 }
 
 td {
@@ -92,6 +128,7 @@ td {
 .inline-info span:first-child {
   clip-path: polygon(0% 0%, 90% 0%, 100% 50%, 90% 100%, 0% 100%);
 }
+
 .inline-info span:not(:first-child) {
   @apply pl-10 -ml-6;
   clip-path: polygon(90% 0, 100% 50%, 90% 100%, 0% 100%, 10% 50%, 0% 0%);

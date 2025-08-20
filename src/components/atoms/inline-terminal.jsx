@@ -1,6 +1,7 @@
 import { useMemo, useCallback, useEffect, useState } from 'react';
 import Profile from '../molecules/profile';
 import { useTerminal } from '@/utils/store/terminal';
+import Projects from '../molecules/projects';
 
 
 export default function InlineTerminal({ bottomRef, index }) {
@@ -31,12 +32,16 @@ export default function InlineTerminal({ bottomRef, index }) {
         clear: () => clearHistory(focusedIndex),
         date: () => `Current date is: ${new Date().toLocaleString()}`,
         profile: <Profile showTerminal={false} />,
-        about: 'This portfolio is built using React and Zustand for state management. It features a terminal interface where you can interact with various commands, inspired by Hyprland.'
+        about: 'This portfolio is built using React and Zustand for state management. It features a terminal interface where you can interact with various commands, inspired by Hyprland.',
+        hyprland: (
+            <span className="text-[1.25em]">Hyprland is a dynamic tiling Wayland compositor that offers a modern and efficient desktop experience. It is known for its performance and flexibility, making it a popular choice among Linux users. Learn more at <a href="https://hypr.land/" className="underline">https://hypr.land/</a></span>
+        ),
+        projects: <Projects/>
     }
 
     const handleKeyDown = useCallback((event) => {
         console.log(event.key, "key pressed", input[focusedIndex]);
-        const blockedKeys = ['Tab', 'Meta', 'Shift']
+        const blockedKeys = ['Tab', 'Meta', 'Shift', 'Escape']
         if(event.ctrlKey || event.metaKey || event.altKey || blockedKeys.includes(event.key)) {
             return;
         }
@@ -91,7 +96,7 @@ export default function InlineTerminal({ bottomRef, index }) {
     }, [history, index]);
 
     return (
-        <>
+        <div className="px-2">
             {history?.[index]?.map((line, index) => (
                 <div key={index} >
                     <div className="inline-info">
@@ -138,6 +143,6 @@ export default function InlineTerminal({ bottomRef, index }) {
                 </p>
                 <span className={`text-[2em] -translate-x-5 ${focusedIndex === index ? 'last:animate-blinking' : 'hidden'} transition-all`}>|</span>
             </div>
-        </>
+        </div>
     )
 }

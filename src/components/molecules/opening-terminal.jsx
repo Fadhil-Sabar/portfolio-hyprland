@@ -19,7 +19,7 @@ export default function OpeningTerminal({ item, index, className }) {
                 <div className={`flex flex-col items-center justify-center`}>
                     <span className="text-[1.25em]">Hi, welcome to my portfolio</span>
                     <span className="text-[1.25em]">The idea of making this portfolio is to showcase my skills and projects, and I&apos;m inspired by Hyprland, I love how the beauty of linux and smooth animation.</span>
-                    <span className="text-[1.25em] mt-2"><i>Press [Alt] + [Esc] to close</i></span>
+                    <span className="text-[1.25em] mt-2"><i>Hover & Press [Alt] + [Q] to close</i></span>
                 </div>
             </Terminal>
         </div>
