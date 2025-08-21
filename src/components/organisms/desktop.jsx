@@ -19,7 +19,7 @@ export default function Desktop({
     } = useTerminal();
     
     return (
-        <div className={`${currentDesktop < desktop.id ? '-translate-x-11/12' : ''} transition-transform duration-300 ease-in-out overflow-hidden relative`}>
+        <div className={`${currentDesktop < desktop.id ? '-translate-x-full' : ''} transition-transform duration-300 ease-in-out overflow-hidden relative`}>
             {
                 terminal?.filter(item => item?.floating && item?.idDesktop === desktop.id)?.map((item, index) => {
                     return (
