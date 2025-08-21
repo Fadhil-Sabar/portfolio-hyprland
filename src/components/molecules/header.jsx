@@ -24,7 +24,7 @@ export default function Header() {
         <header className="top-0 left-0 w-full h-12 bg-black/50 backdrop-blur-sm flex items-center justify-between rounded-lg m-1 px-4">
             <div className="flex items-center gap-10">
                 <h1 className="text-white text-lg font-bold">Diru</h1>
-                <div className="hidden md:flex flex-row items-center gap-4">
+                <div className="hidden md:hidden flex-row items-center gap-4">
                     {
                         desktops.map((item, index) => (
                             <button key={index} 
