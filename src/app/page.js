@@ -2,32 +2,33 @@
 
 import React from 'react';
 import Profile from "@/components/molecules/profile";
-import Terminal from "@/components/organisms/terminal";
 import Image from "next/image";
 import { useCallback, useEffect, useState, useMemo } from "react";
 import localFont from 'next/font/local';
-import MainTerminal from "@/components/molecules/main-terminal";
 import { useTerminal } from '@/utils/store/terminal';
-import OpeningTerminal from '@/components/molecules/opening-terminal';
 import ProgressBar from '@/components/atoms/progress-bar';
-import TextWithTooltip from '@/components/atoms/text-with-tooltip';
 import HelpTerminal from '@/components/molecules/help-terminal';
 import { useIsMobile } from '@/utils/hooks/is-mobile';
-import TerminalProject from '@/components/molecules/project-terminal';
 import Projects from '@/components/molecules/projects';
+import Header from '@/components/molecules/header';
+import Desktops from '@/components/templates/desktops';
+import { useDesktops } from '@/utils/store/desktop';
 
 const fantasqueBold = localFont({ src: '../../public/fonts/FantasqueSansMNerdFont-Bold.ttf' });
 
 export default function Home() {
   const isMobile = useIsMobile()
   const [terminal, setTerminal] = useState([
-    { closing: false, floating: true },
+    {id: Math.random(), closing: false, floating: true, idDesktop: 0 },
   ]);
   const [isCurrentlyClosing, setIsCurrentlyClosing] = useState(false);
-  const [currentDate, setCurrentDate] = useState('');
 
   const [isLoading, setIsLoading] = useState(true);
   const [progress, setProgress] = useState(0);
+
+  const {
+    currentDesktop,
+  } = useDesktops();
 
   const {
     focusedIndex,
@@ -42,26 +43,26 @@ export default function Home() {
 
   const newTerminal = useCallback(() => {
     setTerminal((prev) => {
-      return [...prev, { id: Math.random(), closing: false }];
+      return [...prev, { id: Math.random(), idDesktop: currentDesktop, closing: false }];
     });
-  }, []);
+  }, [currentDesktop]);
   const newProfileTerminal = useCallback(() => {
     setTerminal((prev) => {
-      return [...prev, { id: Math.random(), closing: false, child: <Profile /> }];
+      return [...prev, { id: Math.random(), idDesktop: currentDesktop, closing: false, child: <Profile /> }];
     });
-  }, []);
+  }, [currentDesktop]);
 
   const newHelpTerminal = useCallback(() => {
     setTerminal((prev) => {
-      return [...prev, { id: Math.random(), closing: false, floating: true, child: <HelpTerminal /> }];
+      return [...prev, { id: Math.random(), idDesktop: currentDesktop, closing: false, floating: true, child: <HelpTerminal /> }];
     });
-  }, []);
+  }, [currentDesktop]);
 
   const newProjectTerminal = useCallback(() => {
     setTerminal((prev) => {
-      return [...prev, { id: Math.random(), closing: false, child: <Projects showTerminal={false} /> }];
+      return [...prev, { id: Math.random(), idDesktop: currentDesktop, closing: false, child: <Projects showTerminal={false} /> }];
     });
-  }, []);
+  }, [currentDesktop]);
 
   const closeTerminal = useCallback(() => {
     setTerminal((prev) => {
@@ -103,24 +104,6 @@ export default function Home() {
     }
 
   }, [closeTerminal, isCurrentlyClosing, newHelpTerminal, newProfileTerminal, newTerminal]);
-
-  const getTerminalGridClasses = (index, totalTerminals) => {
-    if (totalTerminals === 1) {
-      return "col-span-full row-span-full"; // 1 jendela penuh
-    } else if (totalTerminals === 2) {
-      return "col-span-1 row-span-full"; // 2 jendela, masing-masing setengah lebar dan penuh tinggi
-    } else {
-      // Lebih dari 2 jendela
-      if (index === 0) {
-        // Jendela pertama: setengah lebar, penuh tinggi
-        return "col-span-1 row-span-full";
-      } else {
-        // Jendela kedua dan seterusnya: setengah lebar, dibagi secara vertikal
-        // Perhatikan bahwa ini akan berada di "kolom kedua" secara implisit karena kita sudah menempatkan jendela pertama di `col-span-1`
-        return "col-span-1 row-span-1";
-      }
-    }
-  };
 
   // useEffect(() => {
   //   console.log(terminal);
@@ -227,15 +210,6 @@ export default function Home() {
   }, [handleKeyDown]);
 
   useEffect(() => {
-    const intervalId = setInterval(() => {
-      setCurrentDate(new Date().toLocaleString());
-    }, 1000);
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, []);
-
-  useEffect(() => {
     if(isMobile && !isLoading){
       setFocusedIndex(terminal.length - 1)
     }
@@ -262,25 +236,7 @@ export default function Home() {
         />
 
         {/* Content */}
-        <header className="top-0 left-0 w-full h-12 bg-black/50 backdrop-blur-sm flex items-center justify-between rounded-lg m-1 px-4">
-          <h1 className="text-white text-lg font-bold">Diru</h1>
-          <div className="">{currentDate}</div>
-          <div className="flex items-center gap-3 justify-center">
-            <div className="flex items-center gap-4 mx-4">
-              <TextWithTooltip tooltip={'Help'}>
-                <span className="cursor-pointer text-white text-[1.5em]" onClick={() => newHelpTerminal()}>?</span>
-              </TextWithTooltip>
-              <TextWithTooltip tooltip={'Linkedin'}>
-                <span className="cursor-pointer text-blue-400 text-[1.5em]"></span>
-              </TextWithTooltip>
-              <TextWithTooltip tooltip={'Github'}>
-                <span className="cursor-pointer text-white text-[1.5em]"></span>
-              </TextWithTooltip>
-            </div>
-            <span className="text-gray-400 text-[1em]">|</span>
-            <span className="text-white text-[1em]">⏻</span>
-          </div>
-        </header>
+        <Header/>
 
         <div className={`absolute top-[40%] right-0 z-50 ${isMobile ? 'flex' : 'hidden'}`}>
           <div className="flex flex-col items-center gap-2 max-w-4 bg-black/75 px-5 py-2.5 rounded-full mr-1">
@@ -288,43 +244,11 @@ export default function Home() {
             <button className="text-[1.5em] cursor-pointer transition-transform active:scale-150" title="Close Terminal" onClick={() => closeTerminal()}>-</button>
             <button className="text-[1.5em] cursor-pointer transition-transform active:scale-150 -translate-x-1" title="Profile Terminal" onClick={() => newProfileTerminal()}></button>
             <button className="text-[1.5em] cursor-pointer transition-transform active:scale-150 -translate-x-1.25" title="Profile Terminal" onClick={() => newProjectTerminal()}>󰲋</button>
+            <button className="text-[1.5em] cursor-pointer transition-transform active:scale-150 -translate-x-1.25" title="Profile " onClick={() => newProjectTerminal()}>󰲋</button>
           </div>
         </div>
-        {
-          terminal?.filter(item => item?.floating)?.map((item, index) => {
-            return (
-              item.child ? React.cloneElement(item.child, { index, key: item.id }) : <OpeningTerminal
-                index={index}
-                key={index}
-                item={item}
-              />
-            )
-          })
-        }
-
-        <div className={`grid grid-cols-2 grid-rows-2 gap-3 h-[95svh] p-2 overflow-hidden`}>
-          {terminal?.filter(item => !item?.floating)?.map((item, index) => {
-            const totalTerminals = terminal.filter(item => !item?.floating).length;
-            const gridClasses = getTerminalGridClasses(index, totalTerminals);
-
-            return (
-              <Terminal item={item} key={`terminal-${index}`} index={index} className={`${gridClasses}`}>
-                {
-                  item.child ? React.cloneElement(item.child, { index }) : (
-                    <div className={`flex flex-col overflow-scroll max-h-[90svh] transition-opacity ${index !== focusedIndex ? 'opacity-70' : ''}`}>
-                      <div className="text-white text-center py-4">
-                        <h1 className="text-[1.25em] md:text-[1.5em] font-bold">Hi, I&apos;m Fadhil</h1>
-                        <h1 className="text-[1.25em] md:text-[1.5em] font-bold">Welcome to my Hyprland Portfolio</h1>
-                        <p className="mt-4 text-[1em] md:text-[1.25em]">Type <i>help</i> for available commands.</p>
-                      </div>
-                      <MainTerminal index={index} />
-                    </div>
-                  )
-                }
-              </Terminal>
-            );
-          })}
-        </div>
+        
+        <Desktops terminal={terminal} />
       </div>
     </>
   );
