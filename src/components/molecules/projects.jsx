@@ -1,7 +1,11 @@
 import { useMemo } from 'react'
 import Project from '../atoms/project';
+import TerminalProfile from './terminal-profile';
 
-export default function Projects() {
+export default function Projects({
+    showTerminal = true,
+    index
+}) {
     const listProjects = useMemo(() => {
         return [
             {
@@ -78,7 +82,7 @@ export default function Projects() {
     }, []);
 
     return (
-        <div className="p-4 text-[1.25em]">
+        <div className={`p-4 text-[1em] md:text-[1.25em] overflow-y-scroll max-h-[100%] break-words transition-opacity`}>
             {
                 listProjects.map((project, index) => (
                     <Project
@@ -93,6 +97,8 @@ export default function Projects() {
                     />
                 ))
             }
+            <TerminalProfile showTerminal={showTerminal} index={index} />
+            
         </div>
     );
 }

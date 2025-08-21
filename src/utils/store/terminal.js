@@ -70,6 +70,8 @@ export const useTerminal = create((set) => ({
 
         const currentHistory = newHistory[state.focusedIndex] || [];
 
+        if(currentHistory.length === 0) return { input: newInputs };
+
         let currentHistoryIndex = currentHistory.findIndex(d => d.historyIndex !== null);
         let tempIndex = currentHistoryIndex;
 

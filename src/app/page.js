@@ -13,6 +13,8 @@ import ProgressBar from '@/components/atoms/progress-bar';
 import TextWithTooltip from '@/components/atoms/text-with-tooltip';
 import HelpTerminal from '@/components/molecules/help-terminal';
 import { useIsMobile } from '@/utils/hooks/is-mobile';
+import TerminalProject from '@/components/molecules/project-terminal';
+import Projects from '@/components/molecules/projects';
 
 const fantasqueBold = localFont({ src: '../../public/fonts/FantasqueSansMNerdFont-Bold.ttf' });
 
@@ -52,6 +54,12 @@ export default function Home() {
   const newHelpTerminal = useCallback(() => {
     setTerminal((prev) => {
       return [...prev, { id: Math.random(), closing: false, floating: true, child: <HelpTerminal /> }];
+    });
+  }, []);
+
+  const newProjectTerminal = useCallback(() => {
+    setTerminal((prev) => {
+      return [...prev, { id: Math.random(), closing: false, child: <Projects showTerminal={false} /> }];
     });
   }, []);
 
@@ -208,6 +216,9 @@ export default function Home() {
   }, [terminal]);
 
   useEffect(() => {
+    if(isMobile) {
+      return;
+    }
     document.addEventListener("keydown", handleKeyDown);
 
     return () => {
@@ -271,10 +282,12 @@ export default function Home() {
           </div>
         </header>
 
-        <div className={`absolute top-1/2 right-0 z-50 ${isMobile ? 'flex' : 'hidden'}`}>
+        <div className={`absolute top-[40%] right-0 z-50 ${isMobile ? 'flex' : 'hidden'}`}>
           <div className="flex flex-col items-center gap-2 max-w-4 bg-black/75 px-5 py-2.5 rounded-full mr-1">
             <button className="text-[1.5em] cursor-pointer transition-transform active:scale-150" title="New Terminal" onClick={() => newTerminal()}>+</button>
             <button className="text-[1.5em] cursor-pointer transition-transform active:scale-150" title="Close Terminal" onClick={() => closeTerminal()}>-</button>
+            <button className="text-[1.5em] cursor-pointer transition-transform active:scale-150 -translate-x-1" title="Profile Terminal" onClick={() => newProfileTerminal()}></button>
+            <button className="text-[1.5em] cursor-pointer transition-transform active:scale-150 -translate-x-1.25" title="Profile Terminal" onClick={() => newProjectTerminal()}>󰲋</button>
           </div>
         </div>
         {
@@ -300,9 +313,9 @@ export default function Home() {
                   item.child ? React.cloneElement(item.child, { index }) : (
                     <div className={`flex flex-col overflow-scroll max-h-[90svh] transition-opacity ${index !== focusedIndex ? 'opacity-70' : ''}`}>
                       <div className="text-white text-center py-4">
-                        <h1 className="text-[2em] font-bold">Hi, I&apos;m Fadhil</h1>
-                        <h1 className="text-[2em] font-bold">Welcome to my Hyprland Portfolio</h1>
-                        <p className="mt-4 text-[1.25em]">Type <i>help</i> for available commands.</p>
+                        <h1 className="text-[1.25em] md:text-[1.5em] font-bold">Hi, I&apos;m Fadhil</h1>
+                        <h1 className="text-[1.25em] md:text-[1.5em] font-bold">Welcome to my Hyprland Portfolio</h1>
+                        <p className="mt-4 text-[1em] md:text-[1.25em]">Type <i>help</i> for available commands.</p>
                       </div>
                       <MainTerminal index={index} />
                     </div>

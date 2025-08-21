@@ -95,7 +95,7 @@ export default function Terminal({ item, children, className = '', index, isFloa
             onMouseLeave={() => setFocusedIndex(null)}
             onMouseOver={handleMouseOver}
             onMouseDown={onMouseDown}
-            className={`flex-1
+            className={`flex-1 py-2
         ${item?.closing ? 'animate-slide-down-bounce-out isAbleDragging' : 'animate-slide-up-bounce'}
         bg-black/50 backdrop-blur-sm rounded-lg ring-4 ring-amber-500
         ${floatingClasses}

@@ -3,9 +3,11 @@ import Profile from '../molecules/profile';
 import { useTerminal } from '@/utils/store/terminal';
 import Projects from '../molecules/projects';
 import Contact from './contact';
+import { useIsMobile } from '@/utils/hooks/is-mobile';
 
 
 export default function InlineTerminal({ bottomRef, index }) {
+    const isMobile = useIsMobile();
     const currentDate = () => new Date().toLocaleDateString('en-US', {
         month: '2-digit',
         day: '2-digit',
@@ -33,11 +35,11 @@ export default function InlineTerminal({ bottomRef, index }) {
         clear: () => clearHistory(focusedIndex),
         date: () => `Current date is: ${new Date().toLocaleString()}`,
         profile: <Profile showTerminal={false} />,
-        about: 'This portfolio is built using React and Zustand for state management. It features a terminal interface where you can interact with various commands, inspired by Hyprland.',
+        about: 'This portfolio is built using Next.js and Zustand for state management, and Tailwind CSS for styling. It features a terminal interface where you can interact with various commands, inspired by Hyprland.',
         hyprland: (
             <span className="text-[1.25em]">Hyprland is a dynamic tiling Wayland compositor that offers a modern and efficient desktop experience. It is known for its performance and flexibility, making it a popular choice among Linux users. Learn more at <a href="https://hypr.land/" className="underline">https://hypr.land/</a></span>
         ),
-        projects: <Projects/>,
+        projects: <Projects showTerminal={false} />,
         contact: (
             <Contact/>
         )
@@ -86,6 +88,9 @@ export default function InlineTerminal({ bottomRef, index }) {
     }, [input, focusedIndex]);
 
     useEffect(() => {
+        if(isMobile) {
+            return;
+        }
         document.addEventListener('keydown', handleKeyDown);
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
@@ -104,15 +109,15 @@ export default function InlineTerminal({ bottomRef, index }) {
             {history?.[index]?.map((line, index) => (
                 <div key={index} >
                     <div className="inline-info">
-                        <span className="bg-blue-500">
+                        <span className="text-[1em] md:text-[1.25em] bg-blue-500">
                             {`${line.createdAt}`}
                         </span>
-                        <span className="bg-amber-500">
+                        <span className="text-[1em] md:text-[1.25em] bg-amber-500">
                             ~
                         </span>
                     </div>
                     <div className="inline-info">
-                        <span className="bg-amber-700">
+                        <span className="text-[1em] md:text-[1.25em] bg-amber-700">
                             @diru
                         </span>
                         <p className="pl-2 text-[1.25em]">
@@ -131,21 +136,27 @@ export default function InlineTerminal({ bottomRef, index }) {
                 </div>
             ))}
             <div className="inline-info">
-                <span className="bg-blue-500">
+                <span className="text-[1em] md:text-[1.25em] bg-blue-500">
                     {`${currentDate()}`}
                 </span>
-                <span className="bg-amber-500">
+                <span className="text-[1em] md:text-[1.25em] bg-amber-500">
                     ~
                 </span>
             </div>
             <div className="inline-info">
-                <span className="bg-amber-700">
+                <span className="text-[1em] md:text-[1.25em] bg-amber-700">
                     @diru
                 </span>
-                <p className="pl-2 text-[1.25em]">
-                    {input[index] || ''}
-                </p>
-                <span className={`text-[2em] -translate-x-5 ${focusedIndex === index ? 'last:animate-blinking' : 'hidden'} transition-all`}>|</span>
+                {
+                    isMobile ? (
+                        <input value={input[index] || ''} onChange={(e) => addInput(index, e.target.value)} />
+                    ) : (
+                        <p className="pl-2 text-[1em] md:text-[1.25em]">
+                            {input[index] || ''}
+                        </p>
+                    )
+                }
+                <span className={`text-[2em] -translate-x-5 animate-blinking transition-all`}>|</span>
             </div>
         </div>
     )

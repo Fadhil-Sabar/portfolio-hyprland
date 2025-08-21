@@ -46,7 +46,7 @@ export default function Project({ name, type, techStack, description, images, so
                 <ul className="space-y-2">
                     {images.map((image, index) => (
                         <li key={index}>
-                            <Image src={image} alt={`Project ${name} Image ${index + 1}`} width={1200} height={300} />
+                            <Image className="opacity-75 hover:opacity-100 transition-all hover:scale-125" src={image} alt={`Project ${name} Image ${index + 1}`} width={1200} height={300} />
                         </li>
                     ))}
                 </ul>
