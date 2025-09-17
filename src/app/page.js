@@ -13,6 +13,7 @@ import Projects from '@/components/molecules/projects';
 import Header from '@/components/molecules/header';
 import Desktops from '@/components/templates/desktops';
 import { useDesktops } from '@/utils/store/desktop';
+import Desktop from '@/components/organisms/desktop';
 
 const fantasqueBold = localFont({ src: '../../public/fonts/FantasqueSansMNerdFont-Bold.ttf' });
 
@@ -247,8 +248,8 @@ export default function Home() {
             <button className="text-[1.5em] cursor-pointer transition-transform active:scale-150 -translate-x-1.25" title="Profile " onClick={() => newProjectTerminal()}>󰲋</button>
           </div>
         </div>
-        
-        <Desktops terminal={terminal} />
+        <Desktop terminal={terminal} desktop={{id: 0}} />
+        {/* <Desktops terminal={terminal} /> */}
       </div>
     </>
   );

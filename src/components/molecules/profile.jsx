@@ -35,7 +35,7 @@ export default function Profile({
                 </div>
                 <div className="flex flex-col justify-center items-start mx-auto tracking-wide w-full md:w-2/3 gap-2 px-4">
                     <div>
-                        <span className="text-[1.25em] md:text-[1.5em] font-semibold">Fadhil Andriawan</span>
+                        <h3 className="text-[1.25em] md:text-[1.5em] font-semibold">Fadhil Andriawan</h3>
                         <p className="text-[1em] md:text-[1.25em] text-gray-300">Junior Software Developer</p>
                         <span className="text-[1em] md:text-[1.25em] max-w-4xl">Hi, I'm Fadhil, a Junior Software Developer at PT. ILCS, and I'm passionate about exploring new technologies and contributing to large-scale projects. I enjoy the continuous learning journey in programming, from UI design and building user-focused front-end applications to crafting efficient back-end logic.</span>
 
@@ -43,14 +43,14 @@ export default function Profile({
 
                     <div className="flex flex-col md:flex-row gap-2">
                         <div className="md:w-[50%]">
-                            <span className="text-[1.25em] md:text-[1.5em] font-bold text-amber-300">Education</span>
+                            <h3 className="text-[1.25em] md:text-[1.5em] font-bold text-amber-300">Education</h3>
                             <p className="text-[1em] md:text-[1.25em]">2nd year Student at Universitas Terbuka, majoring in System Information</p>
                             <p className="text-[1em] md:text-[1.25em]">Cumulative GPA: 3.42</p>
                             <p className="text-[1em] md:text-[1.25em]">Overall GPA: 3.28</p>
 
                         </div>
                         <div>
-                            <span className="text-[1.25em] md:text-[1.5em] font-bold text-amber-300">Experience</span>
+                            <h3 className="text-[1.25em] md:text-[1.5em] font-bold text-amber-300">Experience</h3>
                             <ul className="text-[1em] md:text-[1.25em] list-none">
                                 <li>
                                     PT Integrasi Logistik Cipta Solusi
@@ -88,7 +88,7 @@ export default function Profile({
 
                     <div className="flex flex-col w-full">
                         <div className="flex">
-                            <span className="text-[1.25em] md:text-[1.5em] font-bold text-amber-300">Skill & interest</span>
+                            <h3 className="text-[1.25em] md:text-[1.5em] font-bold text-amber-300">Skill & interest</h3>
                         </div>
 
                         <div className="flex text-[1em] md:text-[1.25em]">
