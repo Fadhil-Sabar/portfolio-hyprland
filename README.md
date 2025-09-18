@@ -71,7 +71,7 @@ Follow these steps to get the project up and running on your local machine.
     yarn dev
     ```
 
-5.  Open your browser and visit `http://localhost:3000` to see the project in action.
+5.  Open your browser and visit `http://localhost:3001` to see the project in action.
 
 ## Deployment
 
