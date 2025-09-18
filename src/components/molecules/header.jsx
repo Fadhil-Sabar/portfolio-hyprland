@@ -2,7 +2,9 @@ import { useEffect, useState } from 'react'
 import TextWithTooltip from "../atoms/text-with-tooltip";
 import { useDesktops } from '@/utils/store/desktop';
 
-export default function Header() {
+export default function Header({
+    newHelpTerminal
+}) {
     const [currentDate, setCurrentDate] = useState('');
 
     const {
@@ -46,10 +48,10 @@ export default function Header() {
                         <span className="cursor-pointer text-white text-[1.5em]" onClick={() => newHelpTerminal()}>?</span>
                     </TextWithTooltip>
                     <TextWithTooltip tooltip={'Linkedin'}>
-                        <span className="cursor-pointer text-blue-400 text-[1.5em]"></span>
+                        <span className="cursor-pointer text-blue-400 text-[1.5em]" onClick={() => window.open('https://www.linkedin.com/in/fadhil-andriawan-71b875212/', '_blank')}></span>
                     </TextWithTooltip>
                     <TextWithTooltip tooltip={'Github'}>
-                        <span className="cursor-pointer text-white text-[1.5em]"></span>
+                        <span className="cursor-pointer text-white text-[1.5em]" onClick={() => window.open('https://github.com/Fadhil-Sabar', '_blank')}></span>
                     </TextWithTooltip>
                 </div>
                 <span className="text-gray-400 text-[1em]">|</span>

@@ -28,7 +28,10 @@ export default function OpeningTerminal({ item, index, className }) {
                         isMobile ? (
                             <span className="text-[1em] md:text-[1.25em] mt-2"><i>Press - to close</i></span>
                         ) : (
-                            <span className="text-[1em] md:text-[1.25em] mt-2"><i>Hover & Press [Alt] + [Q] to close</i></span>
+                            <>
+                                <span className="text-[1em] md:text-[1.25em] mt-2"><i>Press ? above to start</i></span>
+                                <span className="text-[1em] md:text-[1.25em] mt-2"><i>Hover & Press [Alt] + [Q] to close</i></span>
+                            </>
                         )
                     }
                 </div>

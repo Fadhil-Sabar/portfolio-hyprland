@@ -237,7 +237,9 @@ export default function Home() {
         />
 
         {/* Content */}
-        <Header/>
+        <Header
+          newHelpTerminal={newHelpTerminal}
+        />
 
         <div className={`absolute top-[40%] right-0 z-50 ${isMobile ? 'flex' : 'hidden'}`}>
           <div className="flex flex-col items-center gap-2 max-w-4 bg-black/75 px-5 py-2.5 rounded-full mr-1">

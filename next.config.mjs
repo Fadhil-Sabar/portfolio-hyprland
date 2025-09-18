@@ -1,7 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-        domains: ["picsum.dev"]
+        remotePatterns: [
+            {
+                protocol: "https",
+                hostname: "picsum.dev",
+                port: "",
+                pathname: "/**"
+            }
+        ]
     }
 };
 

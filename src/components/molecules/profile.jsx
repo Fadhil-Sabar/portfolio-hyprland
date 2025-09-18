@@ -26,11 +26,11 @@ export default function Profile({
             <div className="flex flex-col md:flex-row justify-center items-center py-5">
                 <div className="flex flex-row justify-center items-center mx-auto">
                     <Image
-                        src="https://picsum.dev/300/300"
+                        src="/images/profile-pic.jpeg"
                         alt="Profile Picture"
                         width={300}
                         height={300}
-                        className="rounded-full border-2 opacity-70"
+                        className="rounded-full border-2 opacity-70 hover:opacity-100 transition-opacity"
                     />
                 </div>
                 <div className="flex flex-col justify-center items-start mx-auto tracking-wide w-full md:w-2/3 gap-2 px-4">
