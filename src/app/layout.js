@@ -23,6 +23,11 @@ export const metadata = {
     siteName: 'Fadhil Andriawan Portfolio',
     type: 'website',
   },
+  icons: {
+    icon: [
+      { url: "/favicon.png", type: "image/png" },
+    ],
+  }
 };
 
 export default function RootLayout({ children }) {
