@@ -15,7 +15,7 @@ import Desktops from '@/components/templates/desktops';
 import { useDesktops } from '@/utils/store/desktop';
 import Desktop from '@/components/organisms/desktop';
 
-const fantasqueBold = localFont({ src: '../../public/fonts/FantasqueSansMNerdFont-Bold.ttf' });
+const fantasqueBold = localFont({ src: '../../public/fonts/FantasqueSansMNerdFont-Bold.ttf', preload: true });
 
 export default function Home() {
   const isMobile = useIsMobile()
