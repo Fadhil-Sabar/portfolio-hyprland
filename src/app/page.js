@@ -89,7 +89,6 @@ export default function Home() {
     if (!whiteList.includes(event.key) && !event.ctrlKey) {
       event.preventDefault();
     }
-    console.log(event.key);
 
     if (event.key === "Enter" && event.altKey) {
       newTerminal()
@@ -178,10 +177,6 @@ export default function Home() {
 
     return () => clearInterval(interval); // Cleanup
   }, [isLoading]);
-
-  useEffect(() => {
-    console.log("Terminal updated:", terminal);
-  }, [terminal]);
 
   useEffect(() => {
     terminal.forEach((item, index) => {

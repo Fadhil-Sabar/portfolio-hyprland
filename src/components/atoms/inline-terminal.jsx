@@ -46,7 +46,6 @@ export default function InlineTerminal({ bottomRef, index }) {
     }
 
     const handleKeyDown = useCallback((event) => {
-        console.log(event.key, "key pressed", input[focusedIndex]);
         const blockedKeys = ['Tab', 'Meta', 'Shift', 'Escape']
         if(event.ctrlKey || event.metaKey || event.altKey || blockedKeys.includes(event.key)) {
             return;
@@ -55,7 +54,6 @@ export default function InlineTerminal({ bottomRef, index }) {
         if (event.key === 'Enter') {
             event.preventDefault();
             const command = input[focusedIndex].trim();
-            console.log(`Command entered: ${command}`);
             if (command) {
                 let response = ''
 
@@ -98,7 +96,6 @@ export default function InlineTerminal({ bottomRef, index }) {
     }, [handleKeyDown])
 
     useEffect(() => {
-        console.log("History updated:", history[index], "Index:", index);
         if (bottomRef?.current) {
             bottomRef.current.scrollIntoView({ behavior: "smooth" });
         }
