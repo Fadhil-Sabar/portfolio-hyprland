@@ -20,7 +20,7 @@ const fantasqueBold = localFont({ src: '../../public/fonts/FantasqueSansMNerdFon
 export default function Home() {
   const isMobile = useIsMobile()
   const [terminal, setTerminal] = useState([
-    {id: Math.random(), closing: false, floating: true, idDesktop: 0 },
+    // {id: Math.random(), closing: false, floating: true, idDesktop: 0 },
   ]);
   const [isCurrentlyClosing, setIsCurrentlyClosing] = useState(false);
 
@@ -133,18 +133,16 @@ export default function Home() {
       )
     );
 
-    // Promise untuk minimum loading time (misalnya 2.5 detik)
     const minimumTimePromise = new Promise(resolve =>
       setTimeout(resolve, 2500)
     );
 
     try {
-      // Tunggu dua-duanya selesai (siapa lambat, dia yang menang)
       await Promise.all([assetPromise, minimumTimePromise]);
 
-      // Pastikan progress ke 100% + delay kecil biar smooth
       setProgress(100);
       setTimeout(() => {
+        newProfileTerminal()
         setIsLoading(false);
       }, 500);
     } catch (error) {
